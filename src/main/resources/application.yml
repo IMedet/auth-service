@@ -1,0 +1,48 @@
+# Server Configuration
+server:
+  port: 8081
+
+# Application Configuration
+spring:
+  application:
+    name: auth-service
+  
+  # Database Configuration (H2 for development)
+  datasource:
+    url: jdbc:h2:mem:authdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: 
+  
+  # JPA Configuration
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+  
+  # H2 Console Configuration
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+# JWT Configuration
+app:
+  jwt:
+    secret: mySecretKey
+    expiration-ms: 86400000
+
+# Eureka Configuration
+eureka:
+  client:
+    service-url:
+      default-zone: http://localhost:8761/eureka
+  instance:
+    prefer-ip-address: true
+
+# Logging Configuration
+logging:
+  level:
+    kz.qonaqzhai.auth_service: DEBUG
+    org.springframework.security: DEBUG
