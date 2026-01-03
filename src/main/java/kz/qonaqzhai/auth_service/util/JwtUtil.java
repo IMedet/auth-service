@@ -16,10 +16,10 @@ import java.util.Date;
 @Slf4j
 public class JwtUtil {
 
-    @Value("${app.jwtSecret:mySecretKey}")
+    @Value("${app.jwt.secret}")
     private String jwtSecret;
 
-    @Value("${app.jwtExpirationMs:86400000}") // 24 hours
+    @Value("${app.jwt.expiration-ms}") // 24 hours
     private int jwtExpirationMs;
 
     private Key key() {
