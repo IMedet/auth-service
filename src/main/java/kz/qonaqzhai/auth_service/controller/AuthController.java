@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
@@ -86,5 +85,17 @@ public class AuthController {
     @Operation(summary = "Content for users with ADMIN role")
     public ResponseEntity<String> adminAccess() {
         return ResponseEntity.ok("Admin Board.");
+    }
+
+
+    @GetMapping("/test")
+    @Operation(summary = "Test")
+    public ResponseEntity<String> getTest(){
+        return ResponseEntity.ok("Test");
+    }
+
+    @GetMapping("/testV2")
+    public ResponseEntity<String> getTestV2(){
+        return ResponseEntity.ok("TestV2");
     }
 }

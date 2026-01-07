@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
 
@@ -23,7 +24,11 @@ public class JwtUtil {
     private int jwtExpirationMs;
 
     private Key key() {
-        return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
+        try {
+            return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
+        } catch (IllegalArgumentException ex) {
+            return Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
+        }
     }
 
     public String generateJwtToken(Authentication authentication) {
