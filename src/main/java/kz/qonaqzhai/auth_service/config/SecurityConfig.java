@@ -17,6 +17,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import kz.qonaqzhai.auth_service.config.InternalGatewayAuthProperties;
+import kz.qonaqzhai.auth_service.security.InternalGatewayAuthFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -26,6 +28,7 @@ public class SecurityConfig {
 
     private final UserDetailsServiceImpl userDetailsService;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final InternalGatewayAuthProperties internalGatewayAuthProperties;
 
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
@@ -47,7 +50,7 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        System.out.println("Инициализация Security Filter Chain"); // Вы увидите это в логах при старте
+        System.out.println("Инициализация Security Filter Chain");
 
         http.csrf(AbstractHttpConfigurer::disable)
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -63,6 +66,7 @@ public class SecurityConfig {
         http.headers(headers -> headers.frameOptions().disable());
 
         http.authenticationProvider(authenticationProvider());
+        http.addFilterBefore(new InternalGatewayAuthFilter(internalGatewayAuthProperties), UsernamePasswordAuthenticationFilter.class);
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

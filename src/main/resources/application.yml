@@ -30,8 +30,15 @@ spring:
 # JWT Configuration
 app:
   jwt:
-    secret: mySecretKey
+    secret: bXlTZWNyZXRLZXlGb3JKV1RUb2tlbkdlbmVyYXRpb25XaXRoMjU2Qml0c0xlbmd0aEF0TGVhc3Q=
     expiration-ms: 86400000
+
+security:
+  internal-gateway:
+    enabled: ${INTERNAL_GATEWAY_AUTH_ENABLED:true}
+    secret: ${INTERNAL_GATEWAY_SECRET:M9to4I7oX0IsoWvuY13dIxgW}
+    max-skew-seconds: ${INTERNAL_GATEWAY_MAX_SKEW_SECONDS:60}
+    excluded-paths: ${INTERNAL_GATEWAY_EXCLUDED_PATHS:}
 
 # Eureka Configuration
 eureka:
