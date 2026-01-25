@@ -11,6 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
@@ -41,12 +44,88 @@ public class AuthController {
     @GetMapping("/me")
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     @Operation(summary = "Get current user information")
-    public ResponseEntity<User> getCurrentUser() {
+    public ResponseEntity<UserMeResponse> getCurrentUser() {
         User currentUser = authService.getCurrentUser();
-        if (currentUser != null) {
-            return ResponseEntity.ok(currentUser);
+        if (currentUser == null) {
+            return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.notFound().build();
+
+        List<String> roles = currentUser.getAuthorities().stream()
+                .map(a -> a.getAuthority())
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(new UserMeResponse(
+                currentUser.getId(),
+                currentUser.getUsername(),
+                currentUser.getEmail(),
+                roles
+        ));
+    }
+
+    @GetMapping("/profile")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    @Operation(summary = "Get current user profile")
+    public ResponseEntity<UserProfileResponse> getCurrentUserProfile() {
+        UserProfileResponse profile = authService.getCurrentUserProfile();
+        if (profile == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(profile);
+    }
+
+    @PutMapping("/profile")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    @Operation(summary = "Update current user profile")
+    public ResponseEntity<UserProfileResponse> updateCurrentUserProfile(@RequestBody UpdateUserProfileRequest request) {
+        UserProfileResponse profile = authService.updateCurrentUserProfile(request);
+        if (profile == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(profile);
+    }
+
+    @GetMapping("/2fa/status")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    @Operation(summary = "Get current user 2FA status")
+    public ResponseEntity<TwoFactorStatusResponse> getTwoFactorStatus() {
+        TwoFactorStatusResponse status = authService.getTwoFactorStatus();
+        if (status == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(status);
+    }
+
+    @PostMapping("/2fa/setup")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    @Operation(summary = "Generate 2FA secret and otpauth URI for current user")
+    public ResponseEntity<TwoFactorSetupResponse> setupTwoFactor() {
+        TwoFactorSetupResponse setup = authService.setupTwoFactor();
+        if (setup == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(setup);
+    }
+
+    @PostMapping("/2fa/enable")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    @Operation(summary = "Enable 2FA for current user (requires valid TOTP code)")
+    public ResponseEntity<TwoFactorStatusResponse> enableTwoFactor(@RequestBody TwoFactorCodeRequest request) {
+        TwoFactorStatusResponse status = authService.enableTwoFactor(request);
+        if (status == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(status);
+    }
+
+    @PostMapping("/2fa/disable")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    @Operation(summary = "Disable 2FA for current user (requires valid TOTP code)")
+    public ResponseEntity<TwoFactorStatusResponse> disableTwoFactor(@RequestBody TwoFactorCodeRequest request) {
+        TwoFactorStatusResponse status = authService.disableTwoFactor(request);
+        if (status == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(status);
     }
 
     @PostMapping("/validate")

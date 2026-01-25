@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -44,7 +45,18 @@ public class User implements UserDetails {
 
     @NotBlank
     @Size(max = 120)
+    @JsonIgnore
     private String password;
+
+    private String fullName;
+    private String phone;
+    private String company;
+    private String location;
+
+    private boolean twoFactorEnabled = false;
+
+    @JsonIgnore
+    private String twoFactorSecret;
 
     @Enumerated(EnumType.STRING)
     @ElementCollection(fetch = FetchType.EAGER)
