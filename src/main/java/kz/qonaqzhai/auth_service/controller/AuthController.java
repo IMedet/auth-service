@@ -128,6 +128,17 @@ public class AuthController {
         return ResponseEntity.ok(status);
     }
 
+    @PostMapping("/change-password")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    @Operation(summary = "Change current user password")
+    public ResponseEntity<MessageResponse> changePassword(@Valid @RequestBody ChangePasswordRequest request) {
+        MessageResponse resp = authService.changePassword(request);
+        if (resp == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(resp);
+    }
+
     @PostMapping("/validate")
     @Operation(summary = "Validate JWT token")
     public ResponseEntity<MessageResponse> validateToken(@RequestParam String token) {

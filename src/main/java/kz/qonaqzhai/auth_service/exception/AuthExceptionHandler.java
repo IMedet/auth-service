@@ -18,4 +18,9 @@ public class AuthExceptionHandler {
     public ResponseEntity<MessageResponse> handleInvalidOtp(InvalidTwoFactorCodeException ex) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponse(ex.getMessage()));
     }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<MessageResponse> handleIllegalArgument(IllegalArgumentException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse(ex.getMessage()));
+    }
 }

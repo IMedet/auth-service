@@ -18,7 +18,7 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     show-sql: true
   
   # H2 Console Configuration
@@ -26,6 +26,8 @@ spring:
     console:
       enabled: true
       path: /h2-console
+      settings:
+        web-allow-others: true
 
 # JWT Configuration
 app:
@@ -38,7 +40,7 @@ security:
     enabled: ${INTERNAL_GATEWAY_AUTH_ENABLED:true}
     secret: ${INTERNAL_GATEWAY_SECRET:M9to4I7oX0IsoWvuY13dIxgW}
     max-skew-seconds: ${INTERNAL_GATEWAY_MAX_SKEW_SECONDS:60}
-    excluded-paths: ${INTERNAL_GATEWAY_EXCLUDED_PATHS:}
+    excluded-paths: ${INTERNAL_GATEWAY_EXCLUDED_PATHS:/api/auth/signin,/api/auth/signup,/api/auth/validate,/api/auth/test/all,/h2-console/**,/swagger-ui/**,/v3/api-docs/**,/actuator/**}
 
 # Eureka Configuration
 eureka:

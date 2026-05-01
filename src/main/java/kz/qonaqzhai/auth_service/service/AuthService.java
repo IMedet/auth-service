@@ -110,6 +110,26 @@ public class AuthService {
         return null;
     }
 
+    public MessageResponse changePassword(ChangePasswordRequest request) {
+        User user = getCurrentUser();
+        if (user == null) {
+            return null;
+        }
+
+        if (request == null || request.getCurrentPassword() == null || request.getNewPassword() == null) {
+            throw new IllegalArgumentException("Invalid password change request");
+        }
+
+        boolean ok = encoder.matches(request.getCurrentPassword(), user.getPassword());
+        if (!ok) {
+            throw new IllegalArgumentException("Current password is incorrect");
+        }
+
+        user.setPassword(encoder.encode(request.getNewPassword()));
+        userRepository.save(user);
+        return new MessageResponse("Password updated successfully");
+    }
+
     public UserProfileResponse getCurrentUserProfile() {
         User user = getCurrentUser();
         if (user == null) {
